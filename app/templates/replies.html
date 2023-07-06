@@ -1,0 +1,69 @@
+{% extends "index.html" %} {% block content %}
+<div class="container mt-3">
+	<div class="card p-2 mb-2 bg-primary-subtle">
+		<div class="fs-5 mb-1 ps-2">{{ comment.content }}</div>
+		<div class="font-monospace text-secondary mb-2 ps-2">
+			Posted {% if comment.created_at %} {{ comment.created_at.strftime("%a, %b
+			%d %Y at %I:%M %p") }} {% else %} at an unknown time {% endif %} by {% if
+			comment.user %} {{ comment.user.username }} {% else %} anonymous {% endif
+			%}
+		</div>
+	</div>
+	<h2 class="text-primary">Reply to comment...</h2>
+	<form
+		class="d-flex flex-column align-items-start gap-1"
+		action="{{ url_for('replies', comment_id=comment.id) }}"
+		method="POST">
+		<textarea
+			class="form-control bg-secondary-subtle"
+			name="contents"
+			placeholder="Write your reply..."
+			rows="5"
+			style="resize: none"></textarea>
+		<div>
+			<input
+				class="btn btn-primary"
+				type="submit"
+				value="Reply" />
+			<a
+				class="btn btn-warning"
+				href="/"
+				>Cancel</a
+			>
+			<a
+				class="btn btn-secondary"
+				href="/"
+				>Return</a
+			>
+		</div>
+	</form>
+	<ul>
+		{% for reply in replies|sort(reverse=true, attribute="created_at") %}
+		<li class="py-1">
+			<div class="d-flex align-items-center gap-5">
+				<div class="d-flex flex-column">
+					<div class="text-secondary-emphasis fs-5">{{ reply.content }}</div>
+					<div class="text-muted fst-italic">
+						Reply from <strong>{{ reply.user.username }}</strong> {% if
+						reply.created_at %} on {{ reply.created_at.strftime("%a, %b %d %Y at
+						%I:%M %p") }} {% else %} at an unknown time {% endif %}
+					</div>
+				</div>
+				{% if reply.user_id == current_user.id %}
+				<form
+					action="{{ url_for('delete_reply', reply_id=reply.id) }}"
+					method="POST">
+					<button
+						class="btn btn-sm btn-outline-danger"
+						type="submit">
+						Delete
+					</button>
+				</form>
+				{% endif %}
+			</div>
+		</li>
+		<hr />
+		{% endfor %}
+	</ul>
+</div>
+{% endblock %}
