@@ -1,0 +1,65 @@
+:root {
+	--font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+		'Noto Sans', 'Liberation Sans', Arial, sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	--color-primary: hsla(216, 98%, 52%, 1);
+	--color-light: hsla(210, 17%, 98%, 1);
+	--color-yellow: hsla(45, 100%, 51%, 1);
+	--color-green: hsla(152, 69%, 35%, 1);
+}
+
+*,
+::before,
+::after {
+	box-sizing: border-box;
+	margin: 0;
+	outline: none;
+}
+
+body {
+	font-family: var(--font-family);
+
+	& nav {
+		position: sticky;
+		top: 0;
+		z-index: 1020;
+		background-color: var(--color-primary);
+		padding: 1rem;
+	
+		& .nav-container {
+			max-width: 48rem;
+			margin: auto;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+	
+			& .nav-title-wrapper {
+				display: flex;
+				align-items: center;
+				gap: 2rem;
+				color: var(--color-light);
+	
+				& .nav-brand {
+					font-size: 1.25rem;
+				}
+	
+				& .nav-user {
+					color: var(--color-yellow);
+	
+					& .logged-in-user {
+						font-weight: bold;
+					}
+				}
+			}
+	
+			& .nav-link {
+				color: hsla(0, 100%, 100%, 0.55);
+				text-decoration: none;
+	
+				&:hover {
+					color: hsla(0, 100%, 100%, 0.75);
+				}
+			}
+		}
+	}	
+}
