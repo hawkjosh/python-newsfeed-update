@@ -1,113 +1,122 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <main>
-	{% if current_user.is_authenticated %} {% block post_comment %}
-	<form
-		class="post-comment-container"
-		action="."
-		method="POST">
-		<textarea
-			class="post-comment-textbox"
-			name="contents"
-			placeholder="Post a new comment..."
-			rows="5"></textarea>
-		<input
-			class="post-comment-btn"
-			type="submit"
-			value="Post" />
-	</form>
-	{% endblock %} {% else %}
-	<div class="login-message-container">
-		<div class="login-message-text">
-			You must be logged in to interact with the comment forum.
-		</div>
-		<div class="login-message-actions">
-			<a
-				class="login-btn"
-				href="{{ url_for('login') }}"
-				>LOGIN</a
-			>
-			<span>or</span>
-			<a
-				class="register-btn"
-				href="{{ url_for('register') }}"
-				>REGISTER</a
-			>
-		</div>
-	</div>
-	{% endif %} {% block body %} {% endblock %}
+  {% if current_user.is_authenticated %}
+  {% block post_comment %}
+  <form class="post-comment-container" action="." method="POST">
+    <textarea class="post-comment-textbox" name="contents" placeholder="Post a new comment..." rows="5"></textarea>
+    <input class="post-comment-btn" type="submit" value="Post" />
+  </form>
+  {% endblock %}
+  {% else %}
+  <div class="login-message-container">
+    <div class="login-message-text">You must be logged in to interact with the comment forum.</div>
+    <div class="login-message-actions">
+      <a class="login-btn" href="{{ url_for('login') }}">LOGIN</a>
+      <span>or</span>
+      <a class="register-btn" href="{{ url_for('register') }}">REGISTER</a>
+    </div>
+  </div>
+  {% endif %}
 
-	<div class="comments-list-container">
-		{% if comments|length == 0 %}
-		<div class="no-comments-message">
-			No comments posted yet...be the first!!
-		</div>
-		{% else %} {% for comment in comments|sort(reverse=true, attribute="created_at") %}
-		<div class="comment-card">
-			<div class="comment-content-container">
-				<div class="comment-content-text">
-					{{ comment.content }}
-					<span class="comment-content-subtext">
-						Posted by {% if comment.user %} <span class="comment-username">{{ comment.user.username }}</span> {% else %} anonymous {% endif %} {% if comment.created_at %} on {{comment.created_at.strftime("%m/%d/%y at %I:%M %p") }} {% else %} at an unknown time {% endif %}
-					</span>
-				</div>
-				{% if comment.user_id == current_user.id %}
-				<form
-					class="comment-content-actions"
-					action="{{ url_for('delete_comment', comment_id=comment.id) }}"
-					method="POST">
-					<a
-						class="comment-edit-link"
-						href="{{ url_for('edit_comment', comment_id=comment.id) }}"
-						role="button">
-					</a>
-					<button class="comment-delete-btn" type="submit" />
-				</form>
-				{% endif %}
-			</div>
+  {% block edit_comment %}{% endblock %}
 
-			<div class="comment-info-container">
-				<div class="comment-info-wrapper">
-					<div class="comment-info-text">
-						( this comment has
-						{% if comment.replies|length == 0 %}
-						<span class="comment-replies-link">no replies</span>
-						{% elif comment.replies|length == 1 and current_user.is_authenticated %}
-						<a class="comment-replies-link" href="{{ url_for('replies', comment_id=comment.id) }}">1 reply</a>
-						{% elif comment.replies|length == 1 and not current_user.is_authenticated %}
-						<span class="comment-replies-link">1 reply</span>
-						{% elif comment.replies|length > 1 and current_user.is_authenticated %}
-						<a class="comment-replies-link" href="{{ url_for('replies', comment_id=comment.id) }}">{{ comment.replies|length }} replies</a>
-						{% elif comment.replies|length > 1 and not current_user.is_authenticated %}
-						<span class="comment-replies-link">{{ comment.replies|length }} replies</span>
-						{% endif %}
-						and
-						{% if comment.likes|length == 0 %}
-						<span class="likes-count">no likes</span>
-						{% elif comment.likes|length == 1 %}
-						<span class="likes-count">1 like</span>
-						{% elif comment.likes|length > 1 %}
-						<span class="likes-count">{{ comment.likes|length }} likes</span>
-						{% endif %}
-						)
-					</div>
-					{% if comment.likes %}
-					<div class="liked-by-list">
-						Liked by:
-						{% for like in comment.likes %}
-						<span class="liked-by-name">{{ like.user.username }}</span>
-						{% endfor %}
-					</div>
-					{% endif %}
-				</div>
-				{% if current_user.is_authenticated %}
-				<form class="comment-info-actions" action="{{ url_for('like_comment', comment_id=comment.id) }}" method="POST">
-					<a class="comment-reply-btn" href="{{ url_for('replies', comment_id=comment.id) }}" role="button">Reply</a>
-					<button class="comment-like-btn" type="submit" />
-				</form>
-				{% endif %}
-			</div>
-		</div>
-		{% endfor %} {% endif %}
-	</div>
+  <div class="comments-list-container">
+    {% if comments|length == 0 %}
+    <div class="no-comments-message">No comments posted yet...be the first!!</div>
+    {% else %}
+    {% for comment in comments|sort(reverse=true,
+    attribute="created_at") %}
+    <div class="{% if comment.user_id == current_user.id %}comment-card username-you{% else %}comment-card{% endif %}">
+      <div class="comment-text">{{ comment.content }}</div>
+      <div class="comment-info-container">
+        <div class="comment-subtext">
+          Posted by
+          {% if comment.user_id == current_user.id %}
+          <span class="subtext-strong username-you">YOU</span>
+          {% else %}
+          <span class="subtext-strong username">{{ comment.user.username }}</span>
+          {% endif %}
+          on
+          <span class="subtext-strong">{{ comment.created_at.strftime("%a, %#m/%#d/%y") }}</span>
+        </div>
+        <div class="comment-counts">
+          <div class="replies-count-wrapper">
+            {% if comment.replies|length < 1 or comment.replies|length> 1 %}
+              <span class="replies-count">{{ comment.replies|length }} replies</span>
+              {% else %}
+              <span class="replies-count">1 reply</span>
+              {% endif %}
+              {% if comment.replies %}
+              <div class="replies-from-tooltip">
+                <span>Replies from...</span>
+                {% for reply in comment.replies %}
+                <span class="username">{{ reply.user.username }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+          </div>
+          <span>and</span>
+          <div class="likes-count-wrapper">
+            {% if comment.likes|length < 1 or comment.likes|length> 1 %}
+              <span class="likes-count">{{ comment.likes|length }} likes</span>
+              {% else %}
+              <span class="likes-count">1 like</span>
+              {% endif %}
+              {% if comment.likes %}
+              <div class="liked-by-tooltip">
+                <span>Liked by...</span>
+                {% for like in comment.likes %}
+                <span class="username">{{ like.user.username }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if current_user.is_authenticated %}
+      <div class="action-btns-container">
+        <form action="{{ url_for('like_comment', comment_id=comment.id) }}" method="POST">
+          <button class="action-btn like" type="submit">
+            <svg viewBox="0 0 40 40">
+              <path
+                d="M31.5 14.7h-6.9v-7.1a3.6 3.4 90 0 0-3.4-3.6h-2.4a2.4 2.3 90 0 0-2.3 2l-1 7l-4.1 6.4h-7.4v16.6h24a8.3 8 90 0 0 8-8.3v-8.3a4.7 4.6 90 0 0-4.6-4.7zm-20.6 19h-4.6v-11.9h4.6zm22.9-5.9a5.9 5.7 90 0 1-5.7 5.9h-14.9v-12.7l4.5-7l1-7.5h2.4a1.2 1.1 90 0 1 1.1 1.2v9.5h9.1a2.4 2.3 90 0 1 2.3 2.4Z" />
+            </svg>
+            <span class="tooltip-text like">Like</span>
+          </button>
+        </form>
+        <a class="action-btn reply" href="{{ url_for('replies', comment_id=comment.id) }}" role="button">
+          <svg viewBox="0 0 40 40">
+            <path
+              d="M18.4 19.5v3.4q0 0.7 0.5 1.2t1.1 0.5q0.7 0 1.1-0.5t0.5-1.2v-3.4h3.2q0.7 0 1.1-0.5t0.5-1.2q0-0.7-0.5-1.2t-1.1-0.5h-3.2v-3.4q0-0.7-0.5-1.2t-1.1-0.5q-0.7 0-1.1 0.5t-0.5 1.2v3.4h-3.2q-0.7 0-1.1 0.5t-0.5 1.2q0 0.7 0.5 1.2t1.1 0.5h3.2zm-8 12l-3.7 4q-0.8 0.8-1.7 0.4t-1-1.6v-26.9q0-1.4 0.9-2.4t2.3-1h25.6q1.3 0 2.3 1t0.9 2.4v20.6q0 1.4-0.9 2.4t-2.3 1h-22.4zm-3.2-3.4h25.6v-20.6h-25.6v20.6zm0 0v-20.6v20.6Z" />
+          </svg>
+          <span class="tooltip-text reply">Reply</span>
+        </a>
+        {% if comment.user_id == current_user.id %}
+        <a class="action-btn edit" href="{{ url_for('edit_comment', comment_id=comment.id) }}" role="button">
+          <svg viewBox="0 0 40 40">
+            <path
+              d="M7.5 32.5h2.5l15.1-15.1l-2.5-2.5l-15.1 15.1v2.5zm25.1-17.7l-7.5-7.4l2.5-2.5q1-1 2.5-1t2.5 1l2.5 2.5q1 1 1 2.4t-1 2.4l-2.5 2.5zm-2.5 2.6l-18.6 18.6h-7.5v-7.5l18.6-18.6l7.5 7.5zm-6.2-1.3l-1.2-1.2l2.5 2.5l-1.2-1.2Z" />
+          </svg>
+          <span class="tooltip-text edit">Edit</span>
+        </a>
+        <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="POST">
+          <button class="action-btn delete" type="submit">
+            <svg viewBox="0 0 40 40">
+              <path
+                d="M10 36q-1.6 0-2.8-1t-1.2-2.5v-23.1h-2v-3.6h10v-1.8h12v1.8h10v3.6h-2v23.1q0 1.5-1.2 2.5t-2.8 1h-20zm20-26.7h-20v23.1h20v-23.1zm-16 19.6h4v-16h-4v16zm8 0h4v-16h-4v16Z" />
+            </svg>
+            <span class="tooltip-text delete">Delete</span>
+          </button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 </main>
 {% endblock %}

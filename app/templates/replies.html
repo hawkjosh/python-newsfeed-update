@@ -1,69 +1,60 @@
-{% extends "index.html" %} {% block content %}
-<div class="container mt-3">
-	<div class="card p-2 mb-2 bg-primary-subtle">
-		<div class="fs-5 mb-1 ps-2">{{ comment.content }}</div>
-		<div class="font-monospace text-secondary mb-2 ps-2">
-			Posted {% if comment.created_at %} {{ comment.created_at.strftime("%a, %b
-			%d %Y at %I:%M %p") }} {% else %} at an unknown time {% endif %} by {% if
-			comment.user %} {{ comment.user.username }} {% else %} anonymous {% endif
-			%}
-		</div>
-	</div>
-	<h2 class="text-primary">Reply to comment...</h2>
-	<form
-		class="d-flex flex-column align-items-start gap-1"
-		action="{{ url_for('replies', comment_id=comment.id) }}"
-		method="POST">
-		<textarea
-			class="form-control bg-secondary-subtle"
-			name="contents"
-			placeholder="Write your reply..."
-			rows="5"
-			style="resize: none"></textarea>
-		<div>
-			<input
-				class="btn btn-primary"
-				type="submit"
-				value="Reply" />
-			<a
-				class="btn btn-warning"
-				href="/"
-				>Cancel</a
-			>
-			<a
-				class="btn btn-secondary"
-				href="/"
-				>Return</a
-			>
-		</div>
-	</form>
-	<ul>
-		{% for reply in replies|sort(reverse=true, attribute="created_at") %}
-		<li class="py-1">
-			<div class="d-flex align-items-center gap-5">
-				<div class="d-flex flex-column">
-					<div class="text-secondary-emphasis fs-5">{{ reply.content }}</div>
-					<div class="text-muted fst-italic">
-						Reply from <strong>{{ reply.user.username }}</strong> {% if
-						reply.created_at %} on {{ reply.created_at.strftime("%a, %b %d %Y at
-						%I:%M %p") }} {% else %} at an unknown time {% endif %}
-					</div>
-				</div>
-				{% if reply.user_id == current_user.id %}
-				<form
-					action="{{ url_for('delete_reply', reply_id=reply.id) }}"
-					method="POST">
-					<button
-						class="btn btn-sm btn-outline-danger"
-						type="submit">
-						Delete
-					</button>
-				</form>
-				{% endif %}
-			</div>
-		</li>
-		<hr />
-		{% endfor %}
-	</ul>
+{% extends "base.html" %}
+{% block content %}
+<main>
+<div class="comment-container">
+  <div class="comment-info">
+    Comment by
+    {% if comment.user %}
+    <span class="info-strong username">{{ comment.user.username }}</span>
+    {% else %}
+    anonymous
+    {% endif %}
+    on
+    {% if comment.created_at %}
+    <span class="info-strong">{{ comment.created_at.strftime("%a, %#m/%#d/%y") }}</span>
+    {% else %}
+    at an unknown time:
+    {% endif %}
+  </div>
+  <div class="comment-text">{{ comment.content }}</div>
 </div>
+<div class="reply-input-container">
+  <div class="reply-textbox-label">Reply to comment...</div>
+  <form class="reply-textbox-container" action="{{ url_for('replies', comment_id=comment.id) }}" method="POST">
+    <textarea class="reply-textbox" name="contents" placeholder="Write your reply..." rows="3"
+      style="resize: none"></textarea>
+    <div class="reply-textbox-actions">
+      <input class="reply-action-btn reply" type="submit" value="Reply" />
+      <a class="reply-action-btn cancel" href="/" role="button">Cancel</a>
+    </div>
+  </form>
+</div>
+<div class="divider">
+  <hr />
+</div>
+<div class="replies-list-container">
+  {% for reply in replies|sort(reverse=true, attribute="created_at") %}
+  <div class="replies-list-item">
+    <div class="reply-text">{{ reply.content }}</div>
+    <div class="reply-info-wrapper">
+      <div class="reply-info">
+        Reply from
+        <span class="info-strong username">{{ reply.user.username }}</span> on
+        <span class="info-strong">{{ reply.created_at.strftime("%a, %#m/%#d/%y") }}</span>
+      </div>
+      {% if reply.user_id == current_user.id %}
+      <form class="reply-action" action="{{ url_for('delete_reply', reply_id=reply.id) }}" method="POST">
+        <button class="delete-btn" type="submit">
+          <svg viewBox="0 0 40 40">
+            <path
+              d="M10 36q-1.6 0-2.8-1t-1.2-2.5v-23.1h-2v-3.6h10v-1.8h12v1.8h10v3.6h-2v23.1q0 1.5-1.2 2.5t-2.8 1h-20zm20-26.7h-20v23.1h20v-23.1zm-16 19.6h4v-16h-4v16zm8 0h4v-16h-4v16Z" />
+          </svg>
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+</main>
 {% endblock %}

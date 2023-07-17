@@ -1,7 +1,9 @@
 :root {
-	--font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+	--font-primary: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
 		'Noto Sans', 'Liberation Sans', Arial, sans-serif, 'Apple Color Emoji',
 		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	--font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+		'Courier New', monospace;
 	--color-primary: hsla(216, 98%, 52%, 1);
 	--color-light: hsla(210, 17%, 98%, 1);
 	--color-yellow: hsla(45, 100%, 51%, 1);
@@ -17,7 +19,7 @@
 }
 
 body {
-	font-family: var(--font-family);
+	font-family: var(--font-primary);
 
 	& nav {
 		position: sticky;
@@ -25,41 +27,51 @@ body {
 		z-index: 1020;
 		background-color: var(--color-primary);
 		padding: 1rem;
-	
+
 		& .nav-container {
 			max-width: 48rem;
 			margin: auto;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-	
+
 			& .nav-title-wrapper {
 				display: flex;
 				align-items: center;
 				gap: 2rem;
 				color: var(--color-light);
-	
+
 				& .nav-brand {
 					font-size: 1.25rem;
 				}
-	
+
 				& .nav-user {
 					color: var(--color-yellow);
-	
+
 					& .logged-in-user {
 						font-weight: bold;
 					}
 				}
 			}
-	
+
 			& .nav-link {
 				color: hsla(0, 100%, 100%, 0.55);
 				text-decoration: none;
-	
+
 				&:hover {
 					color: hsla(0, 100%, 100%, 0.75);
 				}
 			}
 		}
-	}	
+	}
+
+	& main {
+		width: 90%;
+		max-width: 48rem;
+		margin: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1rem 0;
+	}
 }

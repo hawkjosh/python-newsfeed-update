@@ -1,9 +1,3 @@
-window.onload = function() {
-	let scrollPosition = {{ scroll_position }}
-	window.scrollTo(0, scrollPosition)
-}
-
-
 function formatTimestamp(timestamp) {
 	const options = {
 		weekday: 'short',

@@ -41,7 +41,7 @@ with app.app_context():
     db.session.commit()
 
     # Create sample replies
-    reply1 = Reply(content='"I\'m glad you enjoyed Paris! If you\'re planning to visit Italy, make sure to visit Rome. The Colosseum is a must-see, and the food is incredible!', user=user2, comment=comment1)
+    reply1 = Reply(content='I\'m glad you enjoyed Paris! If you\'re planning to visit Italy, make sure to visit Rome. The Colosseum is a must-see, and the food is incredible!', user=user2, comment=comment1)
     reply2 = Reply(content='Paris is indeed a beautiful city! Did you get a chance to visit the Louvre Museum? The art collection there is amazing.', user=user3, comment=comment1)
     reply3 = Reply(content='Congratulations on the new iPhone! I\'ve been thinking of upgrading mine as well. How\'s the battery life on the new model?', user=user2, comment=comment4)
     reply4 = Reply(content='I\'m still using an older iPhone model, but hearing your positive experience makes me excited to try the new one. Enjoy your new gadget!', user=user3, comment=comment4)
@@ -52,7 +52,7 @@ with app.app_context():
     reply9 = Reply(content='That sounds amazing! Mind sharing the recipe or any special tips you used? I\'d love to give it a try.', user=user1, comment=comment5)
     reply10 = Reply(content='Homemade pizza is the best! Did you experiment with any unique toppings or stick to the classic ones?', user=user3, comment=comment5)
     reply11 = Reply(content='Live concerts are magical! Who was the performer? I\'m always on the lookout for great live shows to attend.', user=user1, comment=comment8)
-    reply12 = Reply(content='"I completely agree! Live music has a way of connecting people. Any favorite songs or moments from the concert?', user=user3, comment=comment8)
+    reply12 = Reply(content='I completely agree! Live music has a way of connecting people. Any favorite songs or moments from the concert?', user=user3, comment=comment8)
     reply13 = Reply(content='I love \'The Great Gatsby\' too! If you enjoy that era, I highly recommend reading \'The Sun Also Rises\' by Ernest Hemingway.', user=user1, comment=comment3)
     reply14 = Reply(content='That book is a classic for a reason! Do you have any other recommendations for similar literary works?', user=user2, comment=comment3)
     reply15 = Reply(content='Yoga is fantastic for both the body and mind. Have you tried any specific styles like Hatha or Vinyasa?', user=user1, comment=comment6)
